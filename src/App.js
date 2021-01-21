@@ -17,21 +17,44 @@ const App = () => {
 
   useEffect(async () => {
     const persons = await axios.get('http://localhost:3001/names');
-    setPeople(persons.data);
+    setPeople(Object.values(persons.data));
   }, []);
 
+  const sortByName = () => {
+    const newPeople = [...people.sort((a, b) => ((a.name > b.name) ? 1 : -1))];
+    setPeople(newPeople);
+  };
+
+  const sortByAmount = () => {
+    people.sort((a, b) => ((a.name < b.name) ? 1 : -1));
+    const newPeople = [...people.sort((a, b) => ((a.amount < b.amount) ? 1 : -1))];
+    setPeople(newPeople);
+  };
+
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>NAME</th>
-          <th>NUMBER</th>
-        </tr>
-      </thead>
-      <tbody>
-        { people.map((person) => <RenderPerson key={person.name} person={person} />)}
-      </tbody>
-    </table>
+    <div>
+      <button onClick={sortByName} type="submit">
+        Sort by name
+      </button>
+      <button onClick={sortByAmount} type="submit">
+        Sort by amount
+      </button>
+      <table>
+        <thead>
+          <tr>
+            <th>NAME</th>
+            <th>AMOUNT</th>
+          </tr>
+        </thead>
+        <tbody>
+          { people.map((person) => <RenderPerson key={person.name} person={person} />)}
+        </tbody>
+      </table>
+      <h3>
+        Names in the list:
+        {` ${people.length}`}
+      </h3>
+    </div>
   );
 };
 
