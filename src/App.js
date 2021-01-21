@@ -14,6 +14,12 @@ const RenderPerson = ({ person }) => (
 
 const App = () => {
   const [people, setPeople] = useState([]);
+  const [search, setSearch] = useState('');
+
+  const filteredPeople = search === '' ? people
+    : people.filter(
+      (person) => person.name.toLowerCase().includes(search.toLowerCase()),
+    );
 
   useEffect(async () => {
     const persons = await axios.get('http://localhost:3001/names');
@@ -31,8 +37,14 @@ const App = () => {
     setPeople(newPeople);
   };
 
+  const searchHandler = (event) => {
+    setSearch(event.target.value);
+  };
+
   return (
     <div>
+      Search:
+      <input value={search} onChange={searchHandler} />
       <button onClick={sortByName} type="submit">
         Sort by name
       </button>
@@ -47,7 +59,7 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
-          { people.map((person) => <RenderPerson key={person.name} person={person} />)}
+          { filteredPeople.map((person) => <RenderPerson key={person.name} person={person} />)}
         </tbody>
       </table>
       <h3>
