@@ -5,6 +5,7 @@ import axios from 'axios';
 
 // Run the json-server: npx json-server --port=3001 --watch names.json
 
+// renders a row with persons name and amount into a table.
 const RenderPerson = ({ person }) => (
   <tr>
     <td>{person.name}</td>
@@ -18,6 +19,7 @@ const App = () => {
   // "search" tracks searchbox state.
   const [people, setPeople] = useState([]);
   const [search, setSearch] = useState('');
+
   // array of people that contains the results of the search
   const filteredPeople = search === '' ? people
     : people.filter(
@@ -27,14 +29,15 @@ const App = () => {
   // Effect hook to get list of names from json server.
   useEffect(async () => {
     const persons = await axios.get('http://localhost:3001/names');
-    setPeople(Object.values(persons.data));
+    setPeople(persons.data);
   }, []);
 
   const sortByName = () => {
     const newPeople = [...people.sort((a, b) => ((a.name > b.name) ? 1 : -1))];
     setPeople(newPeople);
   };
-  // First sorts alphabetically before second pass  sorting by amount.
+
+  // First sorts alphabetically before sorting by amount.
   const sortByAmount = () => {
     people.sort((a, b) => ((a.name < b.name) ? 1 : -1));
     const newPeople = [...people.sort((a, b) => ((a.amount < b.amount) ? 1 : -1))];
@@ -52,14 +55,6 @@ const App = () => {
 
       Search:
       <input value={search} onChange={searchHandler} type="text" />
-      <br />
-
-      <button onClick={sortByName} type="submit">
-        Sort by name
-      </button>
-      <button onClick={sortByAmount} type="submit">
-        Sort by amount
-      </button>
 
       <h4>
         Names in the list:
@@ -68,6 +63,13 @@ const App = () => {
         Names that match search:
         {` ${filteredPeople.length}`}
       </h4>
+
+      <button onClick={sortByName} type="submit">
+        Sort by name
+      </button>
+      <button onClick={sortByAmount} type="submit">
+        Sort by amount
+      </button>
 
       <table>
         <thead>
@@ -78,7 +80,7 @@ const App = () => {
         </thead>
 
         <tbody>
-          { filteredPeople.map(
+          {filteredPeople.map(
             (person) => <RenderPerson key={person.name} person={person} />,
           )}
         </tbody>
